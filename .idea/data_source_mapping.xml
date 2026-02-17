@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/ccea540a-8d8f-4f3b-8030-1045a7bd376c/indultat.sql" value="ccea540a-8d8f-4f3b-8030-1045a7bd376c" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/ccea540a-8d8f-4f3b-8030-1045a7bd376c/photo.sql" value="ccea540a-8d8f-4f3b-8030-1045a7bd376c" />
+    <file url="file://$APPLICATION_CONFIG_DIR$/consoles/db/ccea540a-8d8f-4f3b-8030-1045a7bd376c/sketch.sql" value="ccea540a-8d8f-4f3b-8030-1045a7bd376c" />
+  </component>
+</project>

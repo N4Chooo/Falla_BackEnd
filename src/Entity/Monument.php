@@ -23,16 +23,16 @@ class Monument
     #[ORM\Column(type: Types::TEXT)]
     private ?string $photo = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $sketch = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $pardoned_doll = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $prices = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: Types::TEXT)]
     private ?string $criticism = null;
 
     #[ORM\Column]
