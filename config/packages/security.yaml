@@ -16,6 +16,11 @@ security:
             # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
+        api:
+            pattern: ^/api
+            stateless: true   # sin sesiones de servidor
+            http_basic: # habilita usuario/contraseña en el header
+                realm: "API Access"
         main:
             lazy: true
             provider: app_user_provider
@@ -40,6 +45,11 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/events,       roles: ROLE_USER }
+        - { path: ^/api/participants,       roles: ROLE_ADMIN }
 
 when@test:
     security:
