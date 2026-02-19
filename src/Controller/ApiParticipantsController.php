@@ -118,9 +118,36 @@ final class ApiParticipantsController extends AbstractController
         $participant->setName($data['name']);
         $participant->setCategory($data['category']);
         $participant->setRewards($data['reward']);
-        $participant->setPaymentStatus($data['payment']);
+        if ($data['payment'] == 0) {
+            $status = false;
+        } else {
+            $status = true;
+        }
+        if ($data['fee'] == '0') {
+            $fees = 1;
+        } elseif ($data['fee'] == '1') {
+            $fees = 2;
+        } elseif ($data['fee'] == '2') {
+            $fees = 3;
+        } elseif ($data['fee'] == '3') {
+            $fees = 4;
+        } elseif ($data['fee'] == '4') {
+            $fees = 5;
+        } elseif ($data['fee'] == '5') {
+            $fees = 6;
+        } elseif ($data['fee'] == '6') {
+            $fees = 7;
+        } elseif ($data['fee'] == '7') {
+            $fees = 8;
+        } elseif ($data['fee'] == '8') {
+            $fees = 9;
+        } elseif ($data['fee'] == '9') {
+            $fees = 10;
+        }
+
+        $participant->setPaymentStatus($status);
         $participant->setRol($data['rol']);
-        $fee = $feesRepository->find($data['fee']);
+        $fee = $feesRepository->find($fees);
         $participant->setFee($fee);
         $participant->setDni($data['dni']);
         $entityManager->persist($participant);
