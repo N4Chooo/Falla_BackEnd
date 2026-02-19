@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\FallasParticipants;
+use App\Repository\FallasParticipantsRepository;
 use App\Repository\FeesRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,6 +30,7 @@ final class ApiParticipantsController extends AbstractController
                 if ($dni) {
                     if ($participant->getDni() == $dni) {
                         $data[] = [
+                            'id' => $participant->getId(),
                             'name' => $participant->getName(),
                             'category' => $participant->getCategory(),
                             'rewards' => $participant->getRewards(),
@@ -46,6 +49,7 @@ final class ApiParticipantsController extends AbstractController
                     }
                     if ($participant->isPaymentStatus() == $stat) {
                         $data[] = [
+                            'id' => $participant->getId(),
                             'name' => $participant->getName(),
                             'category' => $participant->getCategory(),
                             'rewards' => $participant->getRewards(),
@@ -59,6 +63,7 @@ final class ApiParticipantsController extends AbstractController
                 if ($rol) {
                     if ($participant->getRol() == $rol) {
                         $data[] = [
+                            'id' => $participant->getId(),
                             'name' => $participant->getName(),
                             'category' => $participant->getCategory(),
                             'rewards' => $participant->getRewards(),
@@ -72,6 +77,7 @@ final class ApiParticipantsController extends AbstractController
                 if ($category) {
                     if ($participant->getCategory() == $category) {
                         $data[] = [
+                            'id' => $participant->getId(),
                             'name' => $participant->getName(),
                             'category' => $participant->getCategory(),
                             'rewards' => $participant->getRewards(),
@@ -91,6 +97,7 @@ final class ApiParticipantsController extends AbstractController
         } else {
             foreach ($participants as $participant) {
                 $data[] = [
+                    'id' => $participant->getId(),
                     'name' => $participant->getName(),
                     'category' => $participant->getCategory(),
                     'rewards' => $participant->getRewards(),
@@ -157,23 +164,90 @@ final class ApiParticipantsController extends AbstractController
 
     }
 
-    #[Route('/{id}', name: 'show_participants', methods: ['GET'])]
-    public function show(FallasParticipants $fallasParticipant): JsonResponse
+
+    #[Route('/edit', name: 'edit_participants', methods: ['PUT', 'PATCH'])]
+    public function edit(Request $request, EntityManagerInterface $entityManager, FeesRepository $feesRepository, FallasParticipantsRepository $fallasRepository): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+        if ($data['id']) {
+            $falleroId = intval($data['id']);
+        }
+
+        $participant = $fallasRepository->find($falleroId);
+        if (isset($data['name'])) {
+            $participant->setName($data['name']);
+        }
+        if (isset($data['category'])) {
+            $participant->setCategory($data['category']);
+        }
+        if (isset($data['reward'])) {
+            $participant->setRewards($data['reward']);
+        }
+        if (isset($data['payment'])) {
+            if ($data['payment'] == 0) {
+                $status = false;
+            } elseif ($data['payment'] == 1) {
+                $status = true;
+            }
+        }
+        if (isset($data['fee'])) {
+            if ($data['fee'] == '0') {
+                $fees = 1;
+            } elseif ($data['fee'] == '1') {
+                $fees = 2;
+            } elseif ($data['fee'] == '2') {
+                $fees = 3;
+            } elseif ($data['fee'] == '3') {
+                $fees = 4;
+            } elseif ($data['fee'] == '4') {
+                $fees = 5;
+            } elseif ($data['fee'] == '5') {
+                $fees = 6;
+            } elseif ($data['fee'] == '6') {
+                $fees = 7;
+            } elseif ($data['fee'] == '7') {
+                $fees = 8;
+            } elseif ($data['fee'] == '8') {
+                $fees = 9;
+            } elseif ($data['fee'] == '9') {
+                $fees = 10;
+            }
+        }
+        if (isset($status)) {
+            $participant->setPaymentStatus($status);
+        }
+        if (isset($data['rol'])) {
+            $participant->setRol($data['rol']);
+        }
+        if (isset($data['fee'])) {
+            $fee = $feesRepository->find($fees);
+            $participant->setFee($fee);
+        }
+        if (isset($data['dni'])) {
+            $participant->setDni($data['dni']);
+        }
+        $entityManager->persist($participant);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'Fallero actualizado correctamente'], 201);
 
     }
 
-    #[Route('/{id}/edit', name: 'app_fallas_participants_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, FallasParticipants $fallasParticipant, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/delete', name: 'delete_participants', methods: ['POST'])]
+    public function delete(Request $request, FallasParticipantsRepository $fallasRepo, UserRepository $userRepository, EntityManagerInterface $entityManager): JsonResponse
     {
+        $data = json_decode($request->getContent(), true);
+        $falleroId = intval($data['id']);
+        $fallero = $fallasRepo->find($falleroId);
+        $user = $userRepository->findOneBy(['dni' => $fallero->getDni()]);
 
+        $entityManager->remove($fallero);
+        if ($user) {
+            $entityManager->remove($user);
+            $entityManager->flush();
+        }
+        $entityManager->flush();
 
-    }
-
-    #[Route('/{id}', name: 'delete_participants', methods: ['POST'])]
-    public function delete(Request $request, FallasParticipants $fallasParticipant, EntityManagerInterface $entityManager): JsonResponse
-    {
-
-
+        return new JsonResponse(['status' => 'Fallero borrado correctamente'], 202);
     }
 }
