@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\FallasParticipants;
+use App\Repository\FeesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -106,5 +107,46 @@ final class ApiParticipantsController extends AbstractController
                 return new JsonResponse($data);
             }
         }
+    }
+
+    #[Route('/create', name: 'create_participants', methods: ['POST'])]
+    public function new(Request $request, EntityManagerInterface $entityManager, FeesRepository $feesRepository): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $participant = new FallasParticipants();
+        $participant->setName($data['name']);
+        $participant->setCategory($data['category']);
+        $participant->setRewards($data['reward']);
+        $participant->setPaymentStatus($data['payment']);
+        $participant->setRol($data['rol']);
+        $fee = $feesRepository->find($data['fee']);
+        $participant->setFee($fee);
+        $participant->setDni($data['dni']);
+        $entityManager->persist($participant);
+        $entityManager->flush();
+
+        return new JsonResponse(['status' => 'Fallero creado correctamente'], 201);
+
+    }
+
+    #[Route('/{id}', name: 'show_participants', methods: ['GET'])]
+    public function show(FallasParticipants $fallasParticipant): JsonResponse
+    {
+
+    }
+
+    #[Route('/{id}/edit', name: 'app_fallas_participants_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, FallasParticipants $fallasParticipant, EntityManagerInterface $entityManager): JsonResponse
+    {
+
+
+    }
+
+    #[Route('/{id}', name: 'delete_participants', methods: ['POST'])]
+    public function delete(Request $request, FallasParticipants $fallasParticipant, EntityManagerInterface $entityManager): JsonResponse
+    {
+
+
     }
 }

@@ -20,9 +20,10 @@ class ApiSecurityController extends AbstractController
                 'message' => 'Credenciales inválidas',
             ], JsonResponse::HTTP_UNAUTHORIZED);
         }
-        
+
         return $this->json([
             'user' => $user->getUserIdentifier(),
+            'name' => $user->getName(),
             'roles' => $user->getRoles(),
             'status' => 'success'
         ]);
